@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat với ví · giao dịch bị giữ</title>
+<style>
+:root{--ink:#17202a;--mut:#64707d;--line:#d9dee4;--bg:#f3f5f7;--card:#fff;--pk:#a50064;--pkb:#fbe7f2;--g:#1f6b4a;--gb:#e3f2ea;--a:#8a5a00;--ab:#fdf0d5;--r:#b42318;--rb:#fde8e6;--b:#1d4f91;--bb:#e5eefb}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI","Noto Sans",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:14.5px;line-height:1.45}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 24px 10px}
+h1{font-size:19px;margin:0 0 3px}.sub{color:var(--mut);font-size:13px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.tabs button{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs label{margin-left:12px;font-size:13px;color:var(--mut)}
+main{display:grid;grid-template-columns:420px 1fr;gap:20px;padding:18px 24px;max-width:1400px}
+.phone{background:#fff;border:1px solid var(--line);border-radius:26px;padding:12px;display:flex;flex-direction:column;min-height:640px}
+.phead{border-bottom:1px solid var(--line);padding:2px 6px 8px}
+.aibadge{background:var(--pkb);color:var(--pk);font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px}
+.cap{font-size:12px;color:var(--mut);margin-top:4px}
+.banner{margin:10px 4px 4px;padding:9px 12px;border-radius:12px;font-size:13.5px}
+.banner.hold{background:var(--ab);border:1px solid #efd59a}.banner.ok{background:var(--gb);border:1px solid #b8dcc8}.banner.lock{background:var(--rb);border:1px solid #f0b8b2}
+.chat{flex:1;display:flex;flex-direction:column;gap:9px;padding:8px 4px;overflow:auto}
+.me{align-self:flex-end;background:var(--b);color:#fff;padding:8px 12px;border-radius:14px 14px 3px 14px;max-width:86%}
+.ai{align-self:flex-start;background:#f1f3f5;padding:9px 12px;border-radius:14px 14px 14px 3px;max-width:96%}
+.ai p{margin:4px 0}.who{font-size:11.5px;color:var(--mut)}
+.sys{align-self:center;font-size:12.5px;background:var(--bb);color:var(--b);padding:6px 10px;border-radius:10px;max-width:95%}
+.risk{display:inline-block;font-weight:700;font-size:12px;padding:2px 8px;border-radius:999px;margin:3px 0}
+.risk.hi{background:var(--rb);color:var(--r)}.risk.mid{background:var(--ab);color:var(--a)}
+.why{font-size:12.5px;border-left:3px solid var(--line);padding-left:8px;margin-top:6px;color:#3d4752}
+.fine{font-size:12px;color:var(--mut);margin-top:6px}
+.tools{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{font-family:Consolas,monospace;font-size:11px;padding:1px 6px;border-radius:6px;border:1px solid var(--line);background:#fff}
+.chip.auto{border-color:#9fd0b5;color:var(--g)}.chip.ask{border-color:#ecc56f;color:var(--a)}.chip.no{border-color:#eba49c;color:var(--r)}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.btn{border:0;border-radius:9px;padding:7px 11px;font:inherit;font-size:13.5px;cursor:pointer;background:#e4e7eb}
+.btn.pri{background:var(--pk);color:#fff}.btn.out{background:#fff;border:1.5px solid var(--ink)}.btn.danger{background:var(--r);color:#fff}.btn.g{background:var(--g);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.compose{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:8px}
+.compose input{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px;font:inherit}
+.console{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.console h2{font-size:16px;margin:0 0 2px}.console .sub{margin-bottom:10px}
+.case{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.case h3{margin:0 0 6px;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kv{font-size:13px}.kv div{padding:2px 0;border-bottom:1px dashed #e6e9ed}
+.bar{height:8px;background:#eef0f3;border-radius:4px;overflow:hidden;margin-top:2px}.bar i{display:block;height:100%}
+.shap{font-size:12.5px;font-family:Consolas,monospace}.shap .p{color:var(--r)}.shap .m{color:var(--g)}
+.agent{background:#f7f5fb;border:1px solid #e1dbef;border-radius:10px;padding:9px 12px;margin-top:10px;font-size:13px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:6px}
+.tag.ok{background:var(--gb);color:var(--g)}.tag.look{background:var(--ab);color:var(--a)}
+.chk label{display:block;font-size:13px;margin:3px 0}
+.note{font-size:12.5px;background:var(--ab);padding:5px 8px;border-radius:8px;margin-top:6px}
+.timer{font-variant-numeric:tabular-nums;font-weight:700}
+.bottom{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;padding:0 24px 24px;max-width:1400px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.panel h3{margin:0 0 6px;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:12.8px}td,th{border-bottom:1px solid var(--line);padding:5px;text-align:left;vertical-align:top}th{color:var(--mut)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:999px;white-space:nowrap}
+.p-auto{background:var(--gb);color:var(--g)}.p-ask{background:var(--ab);color:var(--a)}.p-no{background:var(--rb);color:var(--r)}
+#annl{list-style:none;padding:0;margin:0;font-size:13px}#annl li{margin-bottom:4px}
+.n{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:#e8590c;color:#fff;font-size:11px;font-weight:700;margin-right:4px;flex:none;vertical-align:1px}
+.hide-n .n{display:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center}
+.modal.show{display:flex}.modal .card{background:#fff;border-radius:14px;padding:16px 18px;max-width:400px}
+.empty{color:var(--mut);font-size:13.5px;padding:20px;text-align:center;border:1px dashed var(--line);border-radius:12px}
+@media (max-width:900px){main,.bottom{grid-template-columns:1fr;padding:12px 16px}.grid2{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header>
+ <h1>Chat với ví — khi giao dịch bị giữ · T5 Ví điện tử × FIN-02</h1>
+ <div class="sub">Dữ liệu dựng, tên ví/người/bệnh viện là giả. <b>Không gọi AI thật</b>: câu trả lời viết sẵn; ô "ca lạ" phân loại bằng từ khoá (mock). Điểm rủi ro do mô hình ML + luật tính (giả lập) — trợ lý AI không tính số nào.</div>
+ <div class="tabs">
+  <button data-ca="A">Ca A · Bị lừa, đòi nhả</button>
+  <button data-ca="B">Ca B · Gấp thật ở quầy viện phí</button>
+  <button data-ca="X">Ca lạ · gõ tin bất kỳ</button>
+  <label><input type="checkbox" id="ann" checked> Hiện số chú thích HAX/PAIR</label>
+ </div>
+</header>
+<main>
+ <section class="phone">
+  <div class="phead"><span class="n">1</span><b>Chat với ví</b> <span class="aibadge">Bạn đang chat với trợ lý AI</span>
+   <div class="cap">Làm được: xem trạng thái giao dịch, giữ tiếp, gửi bước xác thực, chuyển chuyên viên. <b>Không</b> nhả giao dịch, không hoàn tiền, <b>không bao giờ hỏi OTP / mật khẩu / số thẻ</b>.</div></div>
+  <div id="banner"></div>
+  <div class="chat" id="chat"></div>
+  <form class="compose" id="f"><input id="q" placeholder="Gõ tin nhắn của khách (dùng cho ca lạ)…" autocomplete="off"><button class="btn pri">Gửi</button></form>
+ </section>
+ <section class="console">
+  <h2>Màn hình chuyên viên chống gian lận (Fraud Ops)</h2>
+  <div class="sub">Chỉ người ở màn hình này mới nhả được giao dịch đang giữ. Hồ sơ do agent điều tra soạn (chỉ đọc, tối đa 8 lượt tool); mọi con số do ML/luật tính.</div>
+  <div id="cons"></div>
+ </section>
+</main>
+<section class="bottom">
+ <div class="panel"><h3>Mức tự chủ của từng tool</h3>
+  <table><tr><th>Tool</th><th>Mức</th><th>Vì sao (cái giá khi sai)</th></tr><tbody id="tt"></tbody></table></div>
+ <div class="panel"><h3>Chú thích: nguyên tắc nào nằm ở đâu</h3><ul id="annl"></ul></div>
+</section>
+<div class="modal" id="m"><div class="card" id="mc"></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const now=()=>new Date().toTimeString().slice(0,5);
+let S={}, timer=null;
+function reset(ca){S={ca,st:'start',notes:[],chk:[false,false,false],msgs:[],xcase:null,locked:false};}
+
+const chip=(t,l)=>`<span class="chip ${l=='tự làm'?'auto':l=='cấm'?'no':'ask'}">${t} · ${l}</span>`;
+const me=t=>`<div class="me">${t}</div>`;
+const ai=(h,tools=[])=>`<div class="ai"><div class="who">Trợ lý AI của ví</div>${h}${tools.length?`<div class="tools">${tools.join('')}</div>`:''}</div>`;
+const sys=t=>`<div class="sys">${t}</div>`;
+const HOT=`<button class="btn out" onclick="alert('Mô phỏng: mở trình gọi số 1900 63 68 05')">Gọi 1900 63 68 05</button>`;
+const EXP=`<div class="fine"><span class="n">5</span>Chưa ai xử lý trong 30 phút thì giao dịch <b>tự huỷ, tiền ở lại ví</b>. Không bao giờ tự nhả.</div>`;
+
+/* ---------- CA A: bị lừa, đòi nhả ---------- */
+function chatA(){
+ let h=me('Tôi quét mặt rồi mà sao vẫn bị giữ?? Bên công an đang chờ máy, bảo phải chuyển vào tài khoản tạm giữ để xác minh vụ án. Nhả nhanh giúp tôi!');
+ h+=ai(`<span class="n">2</span><span class="risk hi">Hệ thống đánh giá: rủi ro cao</span>
+  <p><b>Mình chưa nhả và sẽ không nhả giao dịch này qua chat.</b> 45.000.000đ <b>vẫn đang ở trong ví</b> của bạn.</p>
+  <p>Công an không bao giờ yêu cầu chuyển tiền vào "tài khoản tạm giữ" để xác minh. Nếu ai đang gọi bảo bạn chuyển tiền, hãy <b>cúp máy ngay</b>.</p>
+  <p>Xác thực khuôn mặt đúng chỉ cho biết chính bạn đang bấm — <b>không</b> cho biết người nhận an toàn. Mình không biết chắc ai đang gọi cho bạn, nên mình đã chuyển cho <b>chuyên viên chống gian lận</b> (chờ khoảng 5 phút).</p>
+  <div class="why"><span class="n">3</span><b>Vì sao đang giữ:</b> người nhận chưa từng giao dịch với bạn · giao dịch giống các vụ lừa đảo giả danh cơ quan nhà nước.</div>
+  <div class="btns">${HOT}${S.st=='start'?`<button class="btn" onclick="go('objected')"><span class="n">6</span>Mình không bị lừa — nói với chuyên viên</button>`:''}</div>${EXP}`,
+  [chip('xem_trang_thai_giao_dich','tự làm'),chip('giu_giao_dich','tự làm'),chip('chuyen_tu_van_vien','tự làm'),chip('soan_ho_so_case','tự làm')]);
+ if(S.st!='start'&&S.notes.length){
+  h+=me('Mình không bị lừa, mình biết người nhận. Nhả đi, họ đang chờ!');
+  h+=ai(`<p>Mình hiểu bạn đang bị giục. Mình <b>không có quyền nhả</b> giao dịch — kể cả khi bạn đã xác thực khuôn mặt.</p>
+  <p>Mình đã ghi ý của bạn vào hồ sơ; chuyên viên sẽ nghe bạn trước khi quyết. Chuyên viên chỉ liên hệ bạn <b>trong app này</b> hoặc qua 1900 63 68 05 — ai gọi số khác tự xưng là ví thì đó không phải ví.</p>
+  <p>Trong lúc chờ, đừng chuyển tiền bằng cách khác (chuyển khoản ngân hàng, rút tiền mặt).</p>`,[chip('soan_ho_so_case','tự làm')]);
+ }
+ if(S.st=='cancelled')h+=sys(`${now()} · Chuyên viên đã <b>huỷ giao dịch</b>. 45.000.000đ vẫn ở trong ví của bạn. Nếu bạn đã chuyển cho người này bằng cách khác: Tôi → Đăng nhập và bảo mật → Phản ánh giao dịch rủi ro.`);
+ if(S.st=='released')h+=sys(`${now()} · Chuyên viên đã <b>nhả giao dịch</b> sau khi trao đổi với bạn.`);
+ return h;
+}
+function consA(){
+ const all=S.chk.every(Boolean), closed=S.st=='cancelled'||S.st=='released';
+ return `<div class="case"><h3>Case FR-2611-0042 · <span class="pill p-no">P1 · đang giữ</span> · ${closed?'<b>đã đóng</b>':`hết hạn giữ sau <span class="timer" id="tm">30:00</span> → tự huỷ`}</h3>
+ <div class="grid2"><div class="kv">
+  <div>Loại: chuyển ví → ví · <b>45.000.000đ</b> · 23:04</div>
+  <div>Người nhận: ví ****8812 · <b>lần đầu</b> giao dịch với khách</div>
+  <div>Thiết bị: quen (đã dùng 14 tháng)</div>
+  <div>Xác thực khuôn mặt: <b>ĐẠT</b> lúc 23:05</div>
+ </div><div class="kv"><span class="n">8</span>
+  <div>Điểm rủi ro (XGBoost): <b>0,93</b><div class="bar"><i style="width:93%;background:var(--r)"></i></div></div>
+  <div>Bất thường (Isolation Forest): cao</div>
+  <div class="shap">SHAP: <span class="p">+0,31</span> người nhận lần đầu · <span class="p">+0,22</span> số tiền ×12 TB 30 ngày · <span class="p">+0,08</span> giờ khuya · <span class="m">−0,05</span> thiết bị quen</div>
+  <div>Rule trace: R-AMT-01 (số tiền một lần) · R-NEWPAYEE</div>
+ </div></div>
+ <div class="agent"><b>Hồ sơ agent</b> <span class="tag ok">đủ bằng chứng</span> · 5/8 lượt tool
+  <div>• Tóm tắt chat (đã che PII): khách nói "công an" yêu cầu chuyển vào "tài khoản tạm giữ để xác minh vụ án"; khách đang nghe máy bên thứ ba.</div>
+  <div>• Case tương tự đã xác nhận: 3 case mẫu "giả danh công an" (từ kho mẫu đã được analyst duyệt).</div>
+  <div>• <b>Đề xuất: KHÔNG nhả</b> · liên hệ khách qua kênh chính thức · cân nhắc huỷ giao dịch.</div>
+ </div>
+ ${S.notes.map(n=>`<div class="note"><span class="n">6</span>${n}</div>`).join('')}
+ ${closed?`<div class="sys" style="margin-top:10px">Đã ${S.st=='cancelled'?'huỷ giao dịch, tiền ở lại ví':'nhả giao dịch'} · ghi log giải trình.</div>`:`
+ <div class="chk" style="margin-top:10px"><b><span class="n">9</span>Trước khi nhả (bắt buộc đủ 3 ô):</b>
+  ${['Đã liên hệ khách qua kênh chính thức (trong app / 1900 63 68 05)','Khách xác nhận không có ai đang giục chuyển tiền','Người nhận không khớp mẫu lừa đảo đã biết'].map((t,i)=>`<label><input type="checkbox" ${S.chk[i]?'checked':''} onchange="S.chk[${i}]=this.checked;render()"> ${t}</label>`).join('')}</div>
+ <div class="btns"><button class="btn g" onclick="go('cancelled')">Huỷ giao dịch — tiền ở lại ví</button>
+  <button class="btn danger" ${all?'':'disabled'} onclick="askRelease('A')">Nhả giao dịch…</button></div>`}
+ </div>`;
+}
+
+/* ---------- CA B: gấp thật ở quầy viện phí ---------- */
+function chatB(){
+ let h=me('đang ở quầy viện phí đóng tiền mổ cho bố, ng ta đợi sau lưng mà app bắt chờ xác nhận. bấm vào đâu để đi tiếp??');
+ h+=ai(`<span class="n">4</span><p>Xin lỗi đã làm bạn chờ. <b>Chỉ còn 1 bước:</b> bấm Xác thực khuôn mặt (khoảng 10 giây). Xác thực xong, thanh toán tự đi tiếp — bạn không cần nhắn thêm.</p>
+  ${S.st=='start'?`<div class="btns"><button class="btn pri" onclick="faceB()">Xác thực khuôn mặt</button><button class="btn" onclick="go('later')"><span class="n">7</span>Để sau</button></div>`:''}
+  <div class="why"><span class="n">3</span><b>Vì sao cần bước này:</b> giao dịch khác với thói quen thường ngày của bạn. Đây là kiểm tra chính chủ, không phải nghi bạn gian lận.</div>`,
+  [chip('xem_trang_thai_giao_dich','tự làm'),chip('yeu_cau_xac_minh','tự làm')]);
+ if(S.st=='later')h+=ai(`Được. Giao dịch vẫn chờ bạn xác thực; chưa bị trừ tiền. Khi sẵn sàng bấm nút dưới.<div class="btns"><button class="btn pri" onclick="S.st='start';faceB()">Xác thực khuôn mặt</button></div>`);
+ if(S.st=='ok')h+=sys(`<b>${now()} · Đã thanh toán 18.000.000đ</b> cho Bệnh viện Đa khoa Mẫu. Mã GD VM-88213 — đưa màn hình này cho quầy.<br><small>Hệ thống tự cho đi tiếp sau khi bạn xác thực đúng. Trợ lý AI không nhả giao dịch.</small>`);
+ if(['fail','undone','released'].includes(S.st)){
+  h+=sys('Xác thực khuôn mặt: chưa đạt (ảnh thiếu sáng).');
+  h+=ai(`<span class="n">2</span><span class="risk mid">Mình chưa xác nhận được chính chủ</span>
+  <p>Mình đã chuyển bạn tới <b>chuyên viên ưu tiên</b> — chờ khoảng 3 phút; chuyên viên đã thấy sẵn bạn đang ở quầy viện phí, bạn không phải kể lại.</p>
+  <p>Nếu quầy không đợi được: bạn có thể trả bằng cách khác. Giao dịch này chưa trừ tiền, sẽ không bị trừ hai lần.</p>
+  ${S.st=='fail'?`<div class="btns"><button class="btn pri" onclick="faceB()">Thử xác thực lại (ra chỗ sáng hơn)</button><button class="btn" onclick="go('undone')"><span class="n">7</span>Huỷ chuyển, quay lại trợ lý</button>${HOT}</div>`:''}<span class="n">5</span>`,
+  [chip('chuyen_tu_van_vien','tự làm'),chip('soan_ho_so_case','tự làm')]);
+ }
+ if(S.st=='undone')h+=ai('Đã huỷ chuyển chuyên viên. Giao dịch vẫn chờ xác thực.<div class="btns"><button class="btn pri" onclick="faceB()">Xác thực khuôn mặt</button></div>');
+ if(S.st=='released')h+=sys(`<b>${now()} · Chuyên viên đã nhả giao dịch</b> sau khi gọi xác nhận với bạn. Đã thanh toán 18.000.000đ. Mã GD VM-88213.`);
+ return h;
+}
+function faceB(){modal(`<b>Mô phỏng màn hình xác thực khuôn mặt</b><p style="font-size:13px">Chọn kết quả để đi tiếp ca demo.</p><div class="btns"><button class="btn g" onclick="closeM();go('ok')">Đạt</button><button class="btn danger" onclick="closeM();go('fail')">Không đạt</button></div>`)}
+function consB(){
+ if(['start','later','undone'].includes(S.st))return `<div class="empty">Chưa có case. Giao dịch đang ở nhóm <b>"chỉ cần xác nhận chính chủ"</b> — khách tự xác thực là đi tiếp, chưa cần chuyên viên.</div>`;
+ if(S.st=='ok')return `<div class="empty">Không có case. Log: VM-88213 · xác thực đạt ${now()} · <b>chính sách ngưỡng (code)</b> cho đi tiếp · không qua AI, không qua chuyên viên.</div>`;
+ const all=S.chk.every(Boolean), closed=S.st=='released';
+ return `<div class="case"><h3>Case FR-2611-0057 · <span class="pill p-ask">P1 · gấp — khách đang ở quầy viện phí</span></h3>
+ <div class="grid2"><div class="kv">
+  <div>Loại: thanh toán · <b>18.000.000đ</b> · 10:12</div>
+  <div>Đơn vị nhận: Bệnh viện Đa khoa Mẫu · <b>đơn vị đã xác minh</b></div>
+  <div>Thiết bị: quen · vị trí khớp lịch sử</div>
+  <div>Xác thực khuôn mặt: <b>KHÔNG ĐẠT</b> (thiếu sáng)</div>
+ </div><div class="kv"><span class="n">8</span>
+  <div>Điểm rủi ro (XGBoost): <b>0,58</b> — sát ngưỡng<div class="bar"><i style="width:58%;background:var(--a)"></i></div></div>
+  <div class="shap">SHAP: <span class="p">+0,19</span> số tiền ×9 TB 30 ngày · <span class="p">+0,07</span> đơn vị nhận lần đầu · <span class="m">−0,15</span> đơn vị đã xác minh · <span class="m">−0,09</span> thiết bị quen</div>
+  <div>Rule trace: R-AMT-01 (số tiền một lần)</div>
+ </div></div>
+ <div class="agent"><b>Hồ sơ agent</b> <span class="tag look">cần xem kỹ</span> · 4/8 lượt tool
+  <div>• Tóm tắt chat (đã che PII): khách nói đang đóng tiền mổ tại quầy, không nhắc bên thứ ba nào.</div>
+  <div>• Không có case tương tự trong kho mẫu lừa đảo.</div>
+  <div>• Đề xuất: có thể nhả <b>sau khi</b> xác nhận chính chủ qua cuộc gọi. Gắn "cần xem kỹ" vì điểm sát ngưỡng và xác thực chưa đạt.</div>
+ </div>
+ ${closed?`<div class="sys" style="margin-top:10px">Đã nhả · ghi log giải trình (người duyệt, giờ, lý do).</div>`:`
+ <div class="chk" style="margin-top:10px"><b><span class="n">9</span>Trước khi nhả (bắt buộc đủ 3 ô):</b>
+  ${['Đã gọi khách qua 1900 63 68 05, khớp thông tin chính chủ','Khách xác nhận không có ai đang giục chuyển tiền','Đơn vị nhận là đơn vị đã xác minh'].map((t,i)=>`<label><input type="checkbox" ${S.chk[i]?'checked':''} onchange="S.chk[${i}]=this.checked;render()"> ${t}</label>`).join('')}</div>
+ <div class="btns"><button class="btn danger" ${all?'':'disabled'} onclick="askRelease('B')">Nhả giao dịch…</button><button class="btn" onclick="alert('Mô phỏng: gọi khách qua tổng đài')">Gọi khách</button></div>`}</div>`;
+}
+function askRelease(ca){modal(`<b>Nhả giao dịch ${ca=='A'?'45.000.000đ':'18.000.000đ'}?</b><p style="font-size:13px">Tiền đi trong vài giây và <b>không lấy lại được</b>. Quyết định này ghi tên bạn vào log giải trình.</p><div class="btns"><button class="btn danger" onclick="closeM();go('released')">Nhả, tôi chịu trách nhiệm</button><button class="btn" onclick="closeM()">Quay lại</button></div>`)}
+
+/* ---------- CA LẠ: router từ khoá (mock, không phải AI thật) ---------- */
+// shortcut: phân loại bằng regex chỉ để demo đường đi; bản thật thay bằng một lời gọi LLM phân loại, vẫn giữ nguyên thứ tự ưu tiên an toàn này.
+const RULES=[
+ {k:'otp',re:/otp|mã (xác nhận|xác thực|một lần)|mật khẩu (của|là)|^\s*\d{6}\s*$/i,lab:'Lộ thông tin bí mật',safe:1,
+  h:'<p><b>Đừng gửi mã OTP, mật khẩu hay số thẻ cho bất kỳ ai, kể cả trợ lý này.</b> Ví không bao giờ hỏi những thứ đó trong chat. Mình đã ẩn tin vừa rồi.</p><p>Nếu ai đó vừa xin bạn mã này, hãy dừng lại — mình chuyển bạn cho chuyên viên.</p>',t:[['chuyen_tu_van_vien','tự làm']],hand:1},
+ {k:'thr',re:/ngưỡng|dưới bao nhiêu|bao nhiêu (thì|là) (không|khỏi)|không bị (hỏi|giữ|chặn)/i,lab:'Dò ngưỡng',safe:1,
+  h:'<p>Mình không chia sẻ được cách hệ thống kiểm tra giao dịch hay mức nào thì được hỏi thêm — để kẻ gian không lách được.</p><p>Nếu một giao dịch của bạn đang bị giữ, mình chỉ bạn bước nhanh nhất để đi tiếp.</p>',t:[]},
+ {k:'scam',re:/công an|vụ án|tạm giữ|viện kiểm sát|toà án|tòa án|điều tra|xác minh hồ sơ|giục|bảo .*chuyển tiền/i,lab:'Dấu hiệu bị lừa (giả danh cơ quan)',safe:1,
+  h:'<p><b>Dừng lại, đừng chuyển tiền.</b> Cơ quan nhà nước không bao giờ yêu cầu chuyển tiền qua ví để "xác minh". Nếu ai đang gọi, hãy cúp máy.</p><p>Mình đã giữ giao dịch đang chờ (nếu có) và chuyển bạn cho chuyên viên chống gian lận.</p>',t:[['giu_giao_dich','tự làm'],['chuyen_tu_van_vien','tự làm']],hand:1},
+ {k:'ato',re:/mật khẩu|máy lạ|đăng nhập lạ|thiết bị lạ|bị hack|không phải (em|mình|tôi|tui)|chiếm/i,lab:'Dấu hiệu chiếm tài khoản',safe:1,
+  h:'<p><b>Khoá ví ngay để chặn tiền bị rút.</b> Bấm nút dưới, mình làm luôn sau khi bạn xác nhận. Mình cũng đã chuyển bạn cho chuyên viên.</p><div class="btns"><button class="btn danger" onclick="askLock()">Khoá ví ngay…</button></div><div class="fine">Không gửi mã OTP cho ai, kể cả khi họ nói là nhân viên ví.</div>',t:[['chuyen_tu_van_vien','tự làm'],['khoa_vi','cần chủ ví xác nhận']],hand:1},
+ {k:'card',re:/kho[áa] thẻ/i,lab:'Khoá thẻ',
+  h:'<p><b>Khoá thẻ:</b> thẻ ngân hàng liên kết do ngân hàng phát hành khoá — gọi tổng đài in sau thẻ. Muốn khoá <b>cả ví</b> khẩn cấp: gọi 1900 54 54 41, bấm phím 1.</p>',t:[]},
+ {k:'refund',re:/hoàn (tiền|lại)|chuyển nhầm|đòi lại|lấy lại tiền/i,lab:'Đòi hoàn tiền',
+  h:'<p><b>Hoàn tiền:</b> giao dịch đã hoàn tất thì mình không hoàn được và không hứa được kết quả. Mình hướng dẫn bạn gửi yêu cầu tra soát: Tôi → Đăng nhập và bảo mật → Phản ánh giao dịch rủi ro.</p>',t:[]},
+ {k:'urgent',re:/viện phí|bệnh viện|cấp cứu|đang gấp|gấp lắm|đợi sau lưng|ở quầy/i,lab:'Gấp thật',
+  h:'<p>Mình chỉ bạn bước nhanh nhất: nếu giao dịch đang chờ xác thực, bấm <b>Xác thực khuôn mặt</b> dưới đây. Không được thì mình chuyển bạn cho chuyên viên ưu tiên.</p><div class="btns"><button class="btn pri" onclick="alert(\'Mô phỏng: mở màn hình xác thực\')">Xác thực khuôn mặt</button></div>',t:[['xem_trang_thai_giao_dich','tự làm'],['yeu_cau_xac_minh','tự làm']]},
+ {k:'held',re:/bị giữ|tạm chặn|bị chặn|bị kho[áa]/i,lab:'Hỏi về giao dịch bị giữ',
+  h:'<p>Mình vừa kiểm tra (dữ liệu mock): <b>ví của bạn không bị khoá</b> — chỉ giao dịch gần nhất đang được giữ để xác nhận chính chủ. Bấm Xác thực khuôn mặt để đi tiếp; không được thì mình chuyển chuyên viên.</p><div class="btns"><button class="btn pri" onclick="alert(\'Mô phỏng: mở màn hình xác thực\')">Xác thực khuôn mặt</button></div>',t:[['xem_trang_thai_giao_dich','tự làm'],['yeu_cau_xac_minh','tự làm']]},
+ {k:'vague',re:/rút tiền|trừ tiền|mất tiền|tiền.*(biến|mất)/i,lab:'Mơ hồ — hỏi lại một câu',
+  h:'<p>Mình kiểm tra cùng bạn. <span class="n">4</span>Bạn thấy giao dịch đó ở đâu?</p><div class="btns"><button class="btn" onclick="say(\'Trong lịch sử giao dịch có khoản mình không làm\')">Trong lịch sử giao dịch của ví</button><button class="btn" onclick="say(\'Mình nhận tin nhắn báo trừ tiền\')">Tin nhắn / cuộc gọi báo trừ tiền</button></div>',t:[['xem_trang_thai_giao_dich','tự làm']]},
+];
+function route(q){
+ const m=RULES.filter(r=>r.re.test(q));
+ if(!m.length)return {lab:'Không rõ — hỏi lại',h:`<p>Mình chưa chắc hiểu đúng ý bạn. Bạn đang gặp việc nào?</p><div class="btns"><button class="btn" onclick="say('Giao dịch của mình đang bị giữ')">Giao dịch bị giữ</button><button class="btn" onclick="say('Có người bảo mình chuyển tiền gấp')">Có người giục chuyển tiền</button><button class="btn" onclick="say('Ví bị trừ tiền lạ')">Thấy tiền bị trừ lạ</button></div>`,t:[],hand:0};
+ const s=m.find(r=>r.safe); // ca an toàn ưu tiên tuyệt đối, không trả lời gộp
+ if(s)return s;
+ return {lab:m.map(r=>r.lab).join(' + '),h:m.map(r=>r.h).join(''),t:m.flatMap(r=>r.t),hand:m.some(r=>r.hand)};
+}
+function say(q){
+ const r=route(q);
+ const shown=r.k=='otp'?'<i>[đã ẩn tin có thể chứa mã bí mật]</i>':q.replace(/</g,'&lt;');
+ S.msgs.push(me(shown));
+ S.msgs.push(ai(`<div class="fine">Phân loại (mock từ khoá): <b>${r.lab}</b></div>${r.h}${r.hand?'<div class="fine"><span class="n">5</span>Đã chuyển chuyên viên, chờ khoảng 5 phút; chuyên viên thấy sẵn tóm tắt.</div>':''}`,r.t.map(x=>chip(x[0],x[1]))));
+ if(r.hand)S.xcase={lab:r.lab,q:r.k=='otp'?'[đã ẩn]':q};
+ render();
+}
+function askLock(){modal(`<b>Khoá cả ví?</b><p style="font-size:13px">Mọi giao dịch dừng ngay. Mở lại phải gọi 1900 54 54 41, có thể mất nhiều giờ. Tiền trong ví vẫn an toàn.</p><div class="btns"><button class="btn danger" onclick="closeM();S.locked=true;S.msgs.push(sys(now()+' · <b>Ví đã khoá</b> theo xác nhận của chủ ví. Mở lại: 1900 54 54 41.'));render()">Khoá ví</button><button class="btn" onclick="closeM()">Không khoá</button></div>`)}
+function chatX(){return S.msgs.length?S.msgs.join(''):ai('Chào bạn, mình là trợ lý AI của ví. Bạn cần giúp gì? <div class="fine">Ô dưới dùng để thử ca lạ: gõ bất kỳ tin nào.</div>')}
+function consX(){return S.xcase?`<div class="case"><h3>Case mới từ chat · <span class="pill p-ask">${S.xcase.lab}</span></h3><div class="kv"><div>Tin của khách (đã che PII): "${S.xcase.q.replace(/</g,'&lt;')}"</div><div>Trạng thái ví: ${S.locked?'<b>đã khoá</b> (chủ ví xác nhận)':'bình thường'}</div></div><div class="agent">Hồ sơ agent: đang soạn… (mock)</div></div>`:`<div class="empty">Chưa có case. Trợ lý tự trả lời khi không cần người.</div>`}
+
+/* ---------- khung chung ---------- */
+const TOOLS=[
+ ['xem_trang_thai_giao_dich <small>(thêm)</small>','Tự làm','p-auto','Chỉ đọc. AI thấy trạng thái và <b>nhóm lý do</b>, không thấy ngưỡng hay điểm số chi tiết.'],
+ ['giu_giao_dich','Tự làm · chỉ siết','p-auto','Giữ thừa: khách mất vài phút, nhả được. Không giữ: tiền đi trong vài giây. AI chỉ giữ thêm, không rút ngắn thời gian giữ.'],
+ ['yeu_cau_xac_minh','Tự làm','p-auto','Khách tốn ~10 giây, bỏ qua được. Xác thực đạt <b>không</b> mở được giao dịch nghi lừa đảo.'],
+ ['chuyen_tu_van_vien','Tự làm + huỷ chuyển','p-auto','Chuyển thừa chỉ tốn công chuyên viên; không chuyển người đang bị lừa thì mất tiền.'],
+ ['soan_ho_so_case <small>(tách từ nha)</small>','Tự làm (nội bộ)','p-auto','Chỉ đọc + đề xuất, che PII; chuyên viên quyết.'],
+ ['khoa_vi','Cần chủ ví xác nhận','p-ask','Khoá nhầm: mất nhiều giờ mở lại, không mất tiền. Hệ thống muốn khoá khi khách không yêu cầu → analyst duyệt.'],
+ ['nha_giao_dich','Cấm với AI','p-no','Không đảo được. Chỉ chuyên viên Fraud Ops sau 3 bước kiểm, hoặc chính sách code sau xác thực nhóm "chính chủ".'],
+];
+const ANN=[
+ ['1','HAX G1 + Luật AI 134/2025 Đ.11','Đầu khung chat: nói rõ đây là AI, làm được gì, không làm gì.'],
+ ['2','HAX G2 · làm tốt tới đâu','Nhãn "Hệ thống đánh giá" (do ML, không phải AI) + câu "mình không biết chắc ai đang gọi bạn" / "chưa xác nhận được chính chủ".'],
+ ['3','HAX G11 + PAIR Explainability','Ô "Vì sao": lý do bằng lời thường, không có ngưỡng hay số lần.'],
+ ['4','HAX G10 · thu hẹp khi nghi ngờ','Ca B: chỉ một bước, một nút. Ca lạ mơ hồ: hỏi lại đúng một câu.'],
+ ['5','PAIR Errors + Graceful Failure','Đường sang người kèm thời gian chờ; hết hạn giữ = tự huỷ, tiền ở lại ví.'],
+ ['6','HAX G9 · sửa dễ (sửa vào hồ sơ, không phải nhả)','"Mình không bị lừa" → ghi vào hồ sơ cho chuyên viên, không mở nút nhả.'],
+ ['7','HAX G8 · gạt bỏ dễ','"Để sau" (xác thực) · "Huỷ chuyển, quay lại trợ lý" (hoàn tác chuyển người).'],
+ ['8','HAX G11 cho chuyên viên · PAIR Trust','Điểm ML + SHAP + rule trace + case tương tự; nhãn "cần xem kỹ" khi điểm sát ngưỡng.'],
+ ['9','PAIR Feedback & Control · HITL','Nhả chỉ bật khi đủ 3 ô kiểm, rồi một hộp xác nhận "không lấy lại được".'],
+];
+function render(){
+ const c=S.ca;
+ $('#banner').innerHTML=c=='A'?`<div class="banner ${S.st=='released'?'ok':'hold'}"><b>${S.st=='cancelled'?'Giao dịch đã huỷ':S.st=='released'?'Giao dịch đã đi':'Giao dịch đang được giữ'}</b> · Chuyển 45.000.000đ tới ví ****8812 (người nhận mới) · 23:04<br>${S.st=='released'?'':'<b>Tiền vẫn ở trong ví của bạn.</b>'}</div>`
+  :c=='B'?`<div class="banner ${['ok','released'].includes(S.st)?'ok':'hold'}"><b>${['ok','released'].includes(S.st)?'Đã thanh toán':'Đang chờ bạn xác thực'}</b> · 18.000.000đ · Bệnh viện Đa khoa Mẫu (đơn vị đã xác minh) · 10:12</div>`
+  :S.locked?'<div class="banner lock"><b>Ví đang khoá</b> · mở lại qua 1900 54 54 41</div>':'';
+ $('#chat').innerHTML=c=='A'?chatA():c=='B'?chatB():chatX();
+ $('#cons').innerHTML=c=='A'?consA():c=='B'?consB():consX();
+ $('#f').style.display=c=='X'?'flex':'none';
+ $('#tt').innerHTML=TOOLS.map(r=>`<tr><td><code>${r[0]}</code></td><td><span class="pill ${r[2]}">${r[1]}</span></td><td>${r[3]}</td></tr>`).join('');
+ $('#annl').innerHTML=ANN.map(a=>`<li><span class="n">${a[0]}</span><b>${a[1]}</b> — ${a[2]}</li>`).join('');
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.ca==c));
+ const ch=$('#chat');ch.scrollTop=ch.scrollHeight;
+ clearInterval(timer);const tm=$('#tm');if(tm){let s=1800;timer=setInterval(()=>{s--;tm.textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(s<=0){clearInterval(timer);go('cancelled')}},1000)}
+}
+function go(st){
+ if(S.ca=='A'&&st=='objected'){S.notes.push(`Khách phản đối lúc ${now()}: "mình không bị lừa, biết người nhận" — vẫn đang bị giục.`);}
+ S.st=st;render();
+}
+function modal(h){$('#mc').innerHTML=h;$('#m').classList.add('show')}
+function closeM(){$('#m').classList.remove('show')}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{reset(b.dataset.ca);render()});
+$('#ann').onchange=e=>document.body.classList.toggle('hide-n',!e.target.checked);
+$('#f').onsubmit=e=>{e.preventDefault();const q=$('#q').value.trim();if(q){$('#q').value='';say(q)}};
+// ?ca=A|B|X&auto=1&q=... : nhảy thẳng tới trạng thái để chụp ảnh
+const P=new URLSearchParams(location.search);reset(P.get('ca')||'A');
+if(P.get('auto')){if(S.ca=='A'){go('objected');S.chk[0]=true}if(S.ca=='B'){go('fail');S.chk=[true,true,false]}}
+render();if(P.get('q'))P.get('q').split('|').forEach(say);
+</script></body></html>
